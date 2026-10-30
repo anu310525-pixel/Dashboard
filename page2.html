@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Solar System Explorer</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #080b2b, #172554);
+    color: white;
+    text-align: center;
+}
+
+header {
+    padding: 30px 15px;
+    background: #11183d;
+}
+
+header h1 {
+    color: #facc15;
+}
+
+.container {
+    max-width: 950px;
+    margin: auto;
+    padding: 20px;
+}
+
+.solar-system {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+    padding: 25px 5px;
+}
+
+.planet {
+    border: 2px solid transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.planet:hover {
+    transform: scale(1.25);
+}
+
+.planet.selected {
+    border-color: white;
+    box-shadow: 0 0 15px #facc15;
+}
+
+.sun {
+    width: 85px;
+    height: 85px;
+    background: radial-gradient(#fff176, #f97316);
+    color: #111;
+    font-size: 12px;
+}
+
+.mercury {
+    width: 25px;
+    height: 25px;
+    background: #9ca3af;
+}
+
+.venus {
+    width: 40px;
+    height: 40px;
+    background: #d6a66b;
+}
+
+.earth {
+    width: 48px;
+    height: 48px;
+    background: radial-gradient(#60a5fa, #166534);
+}
+
+.mars {
+    width: 38px;
+    height: 38px;
+    background: #ef4444;
+}
+
+.jupiter {
+    width: 75px;
+    height: 75px;
+    background: #d6a77a;
+}
+
+.saturn {
+    width: 65px;
+    height: 65px;
+    background: #e9d5a1;
+    border: 5px solid #a78bfa;
+}
+
+.uranus {
+    width: 50px;
+    height: 50px;
+    background: #67e8f9;
+}
+
+.neptune {
+    width: 48px;
+    height: 48px;
+    background: #2563eb;
+}
+
+.info {
+    background: #1e293b;
+    border-radius: 15px;
+    padding: 25px;
+    margin-top: 20px;
+    min-height: 180px;
+}
+
+button, select {
+    padding: 12px 18px;
+    margin: 8px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #facc15;
+    color: #111827;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #fde68a;
+}
+
+#planetFact {
+    line-height: 1.7;
+}
+
+footer {
+    padding: 20px;
+    color: #cbd5e1;
+}
+
+@media(max-width:600px) {
+    .solar-system {
+        gap: 14px;
+    }
+
+    .sun {
+        width: 65px;
+        height: 65px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🌌 Interactive Solar System Explorer</h1>
+    <p>Discover the eight planets of our solar system</p>
+</header>
+
+<div class="container">
+
+    <h2>Explore the Planets</h2>
+
+    <div class="solar-system">
+        <button class="planet sun"
+        onclick="showPlanet('Sun')">SUN</button>
+
+        <button class="planet mercury"
+        onclick="showPlanet('Mercury')" title="Mercury"></button>
+
+        <button class="planet venus"
+        onclick="showPlanet('Venus')" title="Venus"></button>
+
+        <button class="planet earth"
+        onclick="showPlanet('Earth')" title="Earth"></button>
+
+        <button class="planet mars"
+        onclick="showPlanet('Mars')" title="Mars"></button>
+
+        <button class="planet jupiter"
+        onclick="showPlanet('Jupiter')" title="Jupiter"></button>
+
+        <button class="planet saturn"
+        onclick="showPlanet('Saturn')" title="Saturn"></button>
+
+        <button class="planet uranus"
+        onclick="showPlanet('Uranus')" title="Uranus"></button>
+
+        <button class="planet neptune"
+        onclick="showPlanet('Neptune')" title="Neptune"></button>
+    </div>
+
+    <section class="info">
+        <h2 id="planetName">Welcome to Space!</h2>
+        <p id="planetFact">
+            Select any planet above to discover interesting facts.
+        </p>
+    </section>
+
+    <h2>Planet Explorer Tools</h2>
+
+    <select id="planetSelect" onchange="selectPlanet()">
+        <option value="">Choose a planet</option>
+        <option>Mercury</option>
+        <option>Venus</option>
+        <option>Earth</option>
+        <option>Mars</option>
+        <option>Jupiter</option>
+        <option>Saturn</option>
+        <option>Uranus</option>
+        <option>Neptune</option>
+    </select>
+
+    <br>
+
+    <button onclick="randomPlanet()">🎲 Random Planet</button>
+    <button onclick="showAll()">🌍 Show All Planets</button>
+    <button onclick="resetExplorer()">↻ Reset</button>
+
+</div>
+
+<footer>
+    Interactive Solar System Explorer | HTML, CSS & JavaScript
+</footer>
+
+<script>
+
+const planets = {
+    Sun: "The Sun is a star at the center of our solar system. Its gravity keeps the planets in orbit.",
+    Mercury: "Mercury is the closest planet to the Sun. It is the smallest planet.",
+    Venus: "Venus is the second planet from the Sun. It has a very hot surface.",
+    Earth: "Earth is our home planet. It has liquid water on its surface and supports life.",
+    Mars: "Mars is known as the Red Planet because of its reddish appearance.",
+    Jupiter: "Jupiter is the largest planet in our solar system.",
+    Saturn: "Saturn is famous for its beautiful ring system.",
+    Uranus: "Uranus is an ice giant that rotates on its side.",
+    Neptune: "Neptune is the farthest planet from the Sun."
+};
+
+function showPlanet(name) {
+    document.getElementById("planetName").innerText =
+        "🌎 " + name;
+
+    document.getElementById("planetFact").innerText =
+        planets[name];
+
+    document.getElementById("planetSelect").value =
+        name === "Sun" ? "" : name;
+
+    document.querySelectorAll(".planet").forEach(button => {
+        button.classList.toggle(
+            "selected",
+            button.title === name
+        );
+    });
+}
+
+function selectPlanet() {
+    let name = document.getElementById("planetSelect").value;
+
+    if (name) {
+        showPlanet(name);
+    }
+}
+
+function randomPlanet() {
+    let names = Object.keys(planets).filter(
+        name => name !== "Sun"
+    );
+
+    let random = names[
+        Math.floor(Math.random() * names.length)
+    ];
+
+    showPlanet(random);
+}
+
+function showAll() {
+    document.getElementById("planetName").innerText =
+        "Our Solar System";
+
+    document.getElementById("planetFact").innerText =
+        "Our solar system has eight planets: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus and Neptune. They orbit the Sun.";
+
+    document.getElementById("planetSelect").value = "";
+
+    document.querySelectorAll(".planet").forEach(button => {
+        button.classList.remove("selected");
+    });
+}
+
+function resetExplorer() {
+    document.getElementById("planetName").innerText =
+        "Welcome to Space!";
+
+    document.getElementById("planetFact").innerText =
+        "Select any planet above to discover interesting facts.";
+
+    document.getElementById("planetSelect").value = "";
+
+    document.querySelectorAll(".planet").forEach(button => {
+        button.classList.remove("selected");
+    });
+}
+
+</script>
+
+</body>
+</html>

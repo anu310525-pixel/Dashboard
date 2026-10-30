@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Student Revision Dashboard</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+    padding: 20px;
+}
+
+header {
+    background: #4338ca;
+    color: white;
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+header p {
+    margin-top: 8px;
+}
+
+.container {
+    max-width: 950px;
+    margin: 25px auto;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px #00000010;
+}
+
+h2 {
+    margin-bottom: 15px;
+    color: #4338ca;
+}
+
+input, button {
+    padding: 11px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    margin: 5px 0;
+}
+
+button {
+    background: #4338ca;
+    color: white;
+    cursor: pointer;
+    border: none;
+}
+
+button:hover {
+    background: #312e81;
+}
+
+ul {
+    list-style: none;
+}
+
+li {
+    padding: 9px;
+    border-bottom: 1px solid #eee;
+}
+
+li input {
+    margin-right: 10px;
+}
+
+.flashcard {
+    background: #eef2ff;
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 12px;
+    min-height: 85px;
+}
+
+.option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: #e0e7ff;
+    color: #1e293b;
+    margin: 8px 0;
+}
+
+#result {
+    font-weight: bold;
+    margin-top: 12px;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #64748b;
+}
+
+@media(max-width:600px) {
+    body { padding: 10px; }
+    header { padding: 20px 10px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Smart Student Revision Dashboard</h1>
+    <p>Your Personal Study and Exam Preparation Tool</p>
+</header>
+
+<div class="container">
+
+    <section class="card">
+        <h2>📚 Study Topics</h2>
+        <input type="text" id="topicInput"
+        placeholder="Enter a study topic">
+        <button onclick="addTopic()">Add Topic</button>
+        <ul id="topicList"></ul>
+    </section>
+
+    <section class="card">
+        <h2>⏰ Exam Countdown</h2>
+        <p>Select your exam date:</p>
+        <input type="date" id="examDate">
+        <button onclick="countdown()">Calculate</button>
+        <p id="countdownResult"></p>
+    </section>
+
+    <section class="card">
+        <h2>🃏 Revision Flashcards</h2>
+        <div class="flashcard">
+            <h3 id="question">What is HTML?</h3>
+            <p id="answer" hidden>
+                HTML stands for HyperText Markup Language.
+            </p>
+        </div>
+        <button onclick="showAnswer()">Show Answer</button>
+        <button onclick="nextCard()">Next Card</button>
+    </section>
+
+    <section class="card">
+        <h2>📝 JavaScript Quiz</h2>
+        <p id="quizQuestion"></p>
+        <div id="quizOptions"></div>
+        <p id="result"></p>
+        <button onclick="nextQuestion()">Next Question</button>
+        <p id="score"></p>
+    </section>
+
+    <section class="card">
+        <h2>📊 Study Progress</h2>
+        <p id="progressText">Completed: 0</p>
+        <progress id="progressBar" value="0" max="100"
+        style="width:100%;height:20px"></progress>
+        <button onclick="resetProgress()">Reset Progress</button>
+    </section>
+
+</div>
+
+<footer>
+    <p>Smart Student Revision Dashboard | Created using HTML, CSS & JavaScript</p>
+</footer>
+
+<script>
+
+let completed = 0;
+
+function addTopic() {
+    let input = document.getElementById("topicInput");
+    let topic = input.value.trim();
+
+    if (topic === "") {
+        alert("Please enter a topic!");
+        return;
+    }
+
+    let li = document.createElement("li");
+    let checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+
+    checkbox.onchange = function() {
+        completed += checkbox.checked ? 1 : -1;
+        updateProgress();
+    };
+
+    li.appendChild(checkbox);
+    li.appendChild(document.createTextNode(topic));
+
+    document.getElementById("topicList").appendChild(li);
+    input.value = "";
+}
+
+function updateProgress() {
+    let total = document.querySelectorAll(
+        "#topicList input[type=checkbox]"
+    ).length;
+
+    let percentage = total === 0 ? 0 :
+        Math.round(completed / total * 100);
+
+    document.getElementById("progressBar").value = percentage;
+    document.getElementById("progressText").innerText =
+        "Completed: " + completed + " / " + total +
+        " (" + percentage + "%)";
+}
+
+function resetProgress() {
+    document.querySelectorAll("#topicList input").forEach(
+        checkbox => checkbox.checked = false
+    );
+    completed = 0;
+    updateProgress();
+}
+
+function countdown() {
+    let date = document.getElementById("examDate").value;
+
+    if (!date) {
+        alert("Please select an exam date!");
+        return;
+    }
+
+    let today = new Date();
+    today.setHours(0,0,0,0);
+
+    let exam = new Date(date + "T00:00:00");
+    let days = Math.ceil((exam - today) / 86400000);
+
+    document.getElementById("countdownResult").innerText =
+        days < 0 ? "This exam date has passed." :
+        days === 0 ? "Your exam is today!" :
+        days + " days remaining for your exam!";
+}
+
+let cards = [
+    ["What is HTML?", "HTML stands for HyperText Markup Language."],
+    ["What is CSS?", "CSS is used to style web pages."],
+    ["What is JavaScript?", "JavaScript adds interactivity to websites."],
+    ["What is a variable?", "A variable stores a value in a program."]
+];
+
+let cardIndex = 0;
+
+function showAnswer() {
+    document.getElementById("answer").hidden = false;
+}
+
+function nextCard() {
+    cardIndex = (cardIndex + 1) % cards.length;
+    document.getElementById("question").innerText =
+        cards[cardIndex][0];
+    document.getElementById("answer").innerText =
+        cards[cardIndex][1];
+    document.getElementById("answer").hidden = true;
+}
+
+let questions = [
+    {
+        q: "Which language adds interactivity to websites?",
+        options: ["HTML", "CSS", "JavaScript"],
+        answer: "JavaScript"
+    },
+    {
+        q: "Which tag is used for JavaScript?",
+        options: ["<script>", "<style>", "<body>"],
+        answer: "<script>"
+    },
+    {
+        q: "Which keyword declares a variable?",
+        options: ["let", "print", "style"],
+        answer: "let"
+    },
+    {
+        q: "Which symbol is used for comments in JavaScript?",
+        options: ["//", "##", "**"],
+        answer: "//"
+    }
+];
+
+let questionIndex = 0;
+let quizScore = 0;
+let answered = false;
+
+function loadQuestion() {
+    answered = false;
+    document.getElementById("result").innerText = "";
+    let q = questions[questionIndex];
+
+    document.getElementById("quizQuestion").innerText = q.q;
+    let area = document.getElementById("quizOptions");
+    area.innerHTML = "";
+
+    q.options.forEach(option => {
+        let button = document.createElement("button");
+        button.innerText = option;
+        button.className = "option";
+        button.onclick = () => checkAnswer(option);
+        area.appendChild(button);
+    });
+}
+
+function checkAnswer(choice) {
+    if (answered) return;
+    answered = true;
+
+    if (choice === questions[questionIndex].answer) {
+        quizScore++;
+        document.getElementById("result").innerText =
+            "Correct answer!";
+    } else {
+        document.getElementById("result").innerText =
+            "Correct answer: " + questions[questionIndex].answer;
+    }
+
+    document.getElementById("score").innerText =
+        "Score: " + quizScore + " / " + (questionIndex + 1);
+}
+
+function nextQuestion() {
+    if (questionIndex < questions.length - 1) {
+        questionIndex++;
+        loadQuestion();
+    } else {
+        document.getElementById("quizQuestion").innerText =
+            "Quiz completed!";
+        document.getElementById("quizOptions").innerHTML = "";
+        document.getElementById("result").innerText =
+            "Final Score: " + quizScore + " / " + questions.length;
+    }
+}
+
+loadQuestion();
+updateProgress();
+
+</script>
+
+</body>
+</html>
